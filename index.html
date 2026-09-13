@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma Académica - Arquitectura de Ingeniería Web</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  <style>
+   :root {
+      --bg-dark: #0b0914;
+      --card-bg: rgba(23, 18, 41, 0.85);
+      --border-color: rgba(168, 85, 247, 0.4);
+      --primary-accent: #a855f7;
+      --secondary-accent: #ec4899;
+      --tertiary-accent: #06b6d4;
+      --text-main: #ffffff;
+      --text-muted: #e9d5ff; /* Tono lila claro de alto contraste */
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(168, 85, 247, 0.2) 0px, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(236, 72, 153, 0.2) 0px, transparent 50%),
+        radial-gradient(at 50% 50%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Corrección de contraste para textos secundarios */
+    .text-muted {
+      color: #e9d5ff !important; /* Ahora se verá claro y legible */
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(236, 72, 153, 0.7);
+      box-shadow: 0 12px 40px 0 rgba(168, 85, 247, 0.35);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #e9d5ff 0%, #f472b6 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .custom-nav {
+      background: rgba(11, 9, 20, 0.95) !important;
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .nav-pills .nav-link {
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-pills .nav-link.active {
+      background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent)) !important;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.5);
+    }
+
+    .img-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background-color: rgba(255, 255, 255, 0.05);
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-container img {
+      transition: transform 0.5s ease;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .img-container:hover img {
+      transform: scale(1.02);
+    }
+
+    .img-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(11, 9, 20, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .img-container:hover .img-overlay {
+      opacity: 1;
+    }
+
+    .badge-tech {
+      background: rgba(168, 85, 247, 0.25);
+      color: #ffffff;
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: 600;
+    }
+
+    .badge-aca {
+      background: linear-gradient(90deg, #a855f7, #ec4899);
+      color: white;
+      font-weight: 700;
+      border-radius: 30px;
+      padding: 6px 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark custom-nav sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4 gradient-text" href="#"><i class="bi bi-layers-half text-danger me-2"></i>AcademicaWeb</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-2">
+          <li class="nav-item"><a class="nav-link" href="#resumen">Resumen</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pilares">Pilares</a></li>
+          <li class="nav-item"><a class="nav-link" href="#c4">Diagramas C4</a></li>
+          <li class="nav-item"><a class="nav-link" href="#stack">Tech Stack</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="py-5 text-center">
+    <div class="container py-3">
+      <div class="mb-3">
+        <span class="badge-aca"><i class="bi bi-mortarboard-fill"></i> Ingeniería Web — Entrega ACA 1</span>
+      </div>
+      <h1 class="display-4 fw-extrabold mb-3">Ing Web CUN<br><span class="gradient-text">AcademicaWeb</span></h1>
+      <p class="lead col-md-8 mx-auto text-light opacity-75 fs-5">
+        Sistema Central Académico, Gestión de Admisiones, Matrículas y Registro
+      </p>
+
+      <!-- Autoras del Proyecto -->
+      <div class="mt-4 d-inline-block">
+        <div class="glass-card p-3 px-4 d-flex align-items-center gap-3">
+          <div class="text-start">
+            <div class="small text-uppercase fw-bold text-muted mb-1"><i class="bi bi-people-fill text-info"></i> Autoras del Proyecto</div>
+            <div class="fw-bold">Deisy Carolina Pedroza & María Alejandra Caicedo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container my-4">
+
+    <!-- Sección Problema & Solución -->
+    <section id="resumen" class="mb-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="glass-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="p-3 rounded-circle" style="background: rgba(236, 72, 153, 0.2); color: #f472b6;">
+                <i class="bi bi-exclamation-octagon fs-3"></i>
+              </div>
+              <h3 class="m-0 fw-bold">Definición del Problema</h3>
+            </div>
+            <p class="text-light opacity-75 mb-0">Las aplicaciones web monolíticas tradicionales presentan cuellos de botella severos ante altos volúmenes de solicitudes concurrentes durante periodos de matrículas, lentitud en consultas por falta de memoria caché y acoplamiento excesivo entre componentes.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="glass-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div class="p-3 rounded-circle" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">
+                <i class="bi bi-check2-circle fs-3"></i>
+              </div>
+              <h3 class="m-0 fw-bold">Propuesta de Solución</h3>
+            </div>
+            <p class="text-light opacity-75 mb-0">Diseño de una arquitectura web moderna, distribuida y guiada por eventos (Event-Driven) con desacoplamiento asíncrono mediante colas de mensajes, capa de persistencia híbrida (SQL Server + Redis) y empaquetamiento en contenedores Docker.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pilares Evaluados -->
+    <section id="pilares" class="mb-5">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold display-6">Pilares del <span class="gradient-text">Proyecto de Ingeniería</span></h2>
+        <p class="text-muted">Criterios clave de evaluación requeridos por el facilitador</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="glass-card p-4 text-center h-100">
+            <div class="p-3 rounded-4 mb-3 d-inline-block" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+              <i class="bi bi-layout-text-window fs-2"></i>
+            </div>
+            <h5 class="fw-bold">1. Arquitectura & Usabilidad</h5>
+            <p class="small text-muted mb-0">Diseño SPA con navegación fluida, estructuración de contenidos y estándares de usabilidad web.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="glass-card p-4 text-center h-100">
+            <div class="p-3 rounded-4 mb-3 d-inline-block" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;">
+              <i class="bi bi-diagram-3 fs-2"></i>
+            </div>
+            <h5 class="fw-bold">2. Pub/Sub Mensajería</h5>
+            <p class="small text-muted mb-0">Patrones de publicación/suscripción asíncrona mediante Azure Service Bus para desacoplamiento.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="glass-card p-4 text-center h-100">
+            <div class="p-3 rounded-4 mb-3 d-inline-block" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">
+              <i class="bi bi-database-gear fs-2"></i>
+            </div>
+            <h5 class="fw-bold">3. Persistencia (SQL / NoSQL)</h5>
+            <p class="small text-muted mb-0">Bases de datos orientadas a colecciones (SQL Server) junto a capa de caché en memoria con Redis.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="glass-card p-4 text-center h-100">
+            <div class="p-3 rounded-4 mb-3 d-inline-block" style="background: rgba(251, 146, 60, 0.15); color: #fb923c;">
+              <i class="bi bi-box-seam fs-2"></i>
+            </div>
+            <h5 class="fw-bold">4. Contenedores & Cloud</h5>
+            <p class="small text-muted mb-0">Despliegue mediante contenedores Docker y estrategia de exposición de servicios en Azure.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagramas C4 Interactivos -->
+    <section id="c4" class="mb-5">
+      <div class="glass-card p-4 p-md-5">
+        <div class="text-center mb-4">
+          <h2 class="fw-bold display-6">Modelo de <span class="gradient-text">Arquitectura C4</span></h2>
+          <p class="text-muted">Presiona cada pestaña para explorar los niveles y haz clic sobre el diagrama para ampliarlo</p>
+        </div>
+
+        <ul class="nav nav-pills nav-justified mb-4 gap-2" id="c4Tabs" role="tablist">
+          <li class="nav-item"><button class="nav-link active" id="c1-tab" data-bs-toggle="tab" data-bs-target="#c1"><i class="bi bi-globe me-2"></i>Nivel 1: Contexto</button></li>
+          <li class="nav-item"><button class="nav-link" id="c2-tab" data-bs-toggle="tab" data-bs-target="#c2"><i class="bi bi-boxes me-2"></i>Nivel 2: Contenedores</button></li>
+          <li class="nav-item"><button class="nav-link" id="c3-tab" data-bs-toggle="tab" data-bs-target="#c3"><i class="bi bi-cpu me-2"></i>Nivel 3: Componentes</button></li>
+          <li class="nav-item"><button class="nav-link" id="c4-tab" data-bs-toggle="tab" data-bs-target="#c4code"><i class="bi bi-code-slash me-2"></i>Nivel 4: Código</button></li>
+        </ul>
+
+        <div class="tab-content mt-4" id="c4TabsContent">
+          <!-- C1 -->
+          <div class="tab-pane fade show active text-center" id="c1">
+            <div class="img-container mb-3" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('assets/Nivel1_Contexto.png', 'Nivel 1: Diagrama de Contexto')">
+              <img src="assets/Nivel1_Contexto.png" alt="C4 Nivel 1: Diagrama de Contexto">
+              <div class="img-overlay"><span class="btn btn-light rounded-pill fw-bold"><i class="bi bi-zoom-in"></i> Clic para Ampliar</span></div>
+            </div>
+            <p class="text-start text-light opacity-75"><strong>Descripción:</strong> Muestra los actores del sistema (Estudiante/Aspirante y Administrador Académico) y sus interacciones principales con la plataforma Académica y los sistemas externos (Pasarela de Pagos, Servicio de Notificaciones y Ministerio/SNIES).</p>
+          </div>
+          <!-- C2 -->
+          <div class="tab-pane fade text-center" id="c2">
+            <div class="img-container mb-3" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('assets/Nivel2_Contenedores.png', 'Nivel 2: Diagrama de Contenedores')">
+              <img src="assets/Nivel2_Contenedores.png" alt="C4 Nivel 2: Diagrama de Contenedores">
+              <div class="img-overlay"><span class="btn btn-light rounded-pill fw-bold"><i class="bi bi-zoom-in"></i> Clic para Ampliar</span></div>
+            </div>
+            <p class="text-start text-light opacity-75"><strong>Descripción:</strong> Ilustra las aplicaciones que conforman la arquitectura: Frontend SPA, Backend API (.NET Core), Servidor de Persistencia SQL Server, Capa Asíncrona (Azure Service Bus) y Servicios Exteriores.</p>
+          </div>
+          <!-- C3 -->
+          <div class="tab-pane fade text-center" id="c3">
+            <div class="img-container mb-3" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('assets/Nivel3_Componentes.png', 'Nivel 3: Diagrama de Componentes')">
+              <img src="assets/Nivel3_Componentes.png" alt="C4 Nivel 3: Diagrama de Componentes">
+              <div class="img-overlay"><span class="btn btn-light rounded-pill fw-bold"><i class="bi bi-zoom-in"></i> Clic para Ampliar</span></div>
+            </div>
+            <p class="text-start text-light opacity-75"><strong>Descripción:</strong> Desglosa los componentes internos de la Backend API (.NET): Middleware JWT, Controlador de Matrículas, Servicio de Matrículas (Lógica de Negocio), Repositorio ORM y Publicador de Cola Azure.</p>
+          </div>
+          <!-- C4 -->
+          <div class="tab-pane fade text-center" id="c4code">
+            <div class="img-container mb-3" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="openModal('assets/Nivel4_Codigo.png', 'Nivel 4: Diagrama de Código (PlantUML)')">
+              <img src="assets/Nivel4_Codigo.png" alt="C4 Nivel 4: Diagrama de Código">
+              <div class="img-overlay"><span class="btn btn-light rounded-pill fw-bold"><i class="bi bi-zoom-in"></i> Clic para Ampliar</span></div>
+            </div>
+            <p class="text-start text-light opacity-75"><strong>Descripción:</strong> Muestra el modelo de clases de dominio generado en PlantUML que define las entidades principales: Estudiante, Matrícula, Programa Académico y Estados de Matrícula.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stack Tecnológico -->
+    <section id="stack" class="mb-5">
+      <div class="glass-card p-4 text-center">
+        <h4 class="fw-bold mb-4"><i class="bi bi-tools text-warning me-2"></i> Stack Tecnológico y Herramientas Web</h4>
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+          <span class="badge-tech"><i class="bi bi-filetype-html me-1"></i> HTML5 / CSS3</span>
+          <span class="badge-tech"><i class="bi bi-bootstrap me-1"></i> Bootstrap 5</span>
+          <span class="badge-tech"><i class="bi bi-code-square me-1"></i> .NET Core 8 / C#</span>
+          <span class="badge-tech"><i class="bi bi-database me-1"></i> SQL Server</span>
+          <span class="badge-tech"><i class="bi bi-lightning-charge me-1"></i> Redis Cache</span>
+          <span class="badge-tech"><i class="bi bi-cloud me-1"></i> Azure Service Bus</span>
+          <span class="badge-tech"><i class="bi bi-box me-1"></i> Docker & Contenedores</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal para Zoom de Diagramas -->
+  <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content glass-card border-0" style="background: rgba(11, 9, 20, 0.95);">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold text-light" id="modalTitle">Diagrama C4</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center p-3">
+          <img id="modalImage" src="" class="img-fluid rounded-3" alt="Diagrama ampliado">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-4 border-top" style="border-color: var(--border-color) !important;">
+    <small class="text-muted">&copy; Proyecto de Ingeniería Web — ACA 1. Todos los derechos reservados.</small>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function openModal(imageSrc, title) {
+      document.getElementById('modalImage').src = imageSrc;
+      document.getElementById('modalTitle').innerText = title;
+    }
+  </script>
+</body>
+</html>
