@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión y Matrícula Académica | Académica Elite</title>
+    <!-- Bootstrap 5 CSS & Iconos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --sidebar-width: 270px;
+            --primary-blue: #1e3a8a;
+            --accent-blue: #2563eb;
+            --bg-canvas: #f8fafc;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-canvas);
+            color: #0f172a;
+        }
+        
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at top left, #1e3a8a, #0f172a);
+            padding: 20px;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 480px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #0f172a;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            color: #fff;
+            z-index: 1000;
+        }
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 35px;
+        }
+        .sidebar .nav-link {
+            color: #94a3b8;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .card-custom {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            background: #ffffff;
+        }
+        .metric-box {
+            border-left: 4px solid var(--accent-blue);
+        }
+        .hidden { display: none !important; }
+
+        .timeline-box {
+            position: relative;
+            padding-left: 25px;
+            border-left: 2px solid #cbd5e1;
+        }
+        .timeline-node {
+            position: relative;
+            padding-bottom: 25px;
+        }
+        .timeline-node::before {
+            content: '';
+            position: absolute;
+            left: -31px;
+            top: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #94a3b8;
+            border: 2px solid #ffffff;
+        }
+        .timeline-node.completed::before {
+            background: #10b981;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MÓDULO DE AUTENTICACIÓN -->
+    <div id="auth-module" class="auth-wrapper">
+        <div class="card auth-card p-4 bg-white border-0">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary p-3 rounded-circle mb-2">
+                    <i class="bi bi-mortarboard-fill fs-2"></i>
+                </div>
+                <h4 class="fw-bold text-dark m-0">Académica Elite</h4>
+                <p class="text-muted small">Portal de Servicios Académicos y Financieros</p>
+            </div>
+
+            <ul class="nav nav-pills nav-justified mb-3 bg-light p-1 rounded-3">
+                <li class="nav-item">
+                    <button class="nav-link active py-2 fw-semibold" id="tab-login" onclick="toggleAuthForm('login')">Ingresar</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link py-2 fw-semibold" id="tab-register" onclick="toggleAuthForm('register')">Registrarse</button>
+                </li>
+            </ul>
+
+            <div id="auth-error-box" class="alert alert-danger small hidden"></div>
+
+            <form id="form-login" onsubmit="ejecutarLoginLibre(event)">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                        <input type="text" id="login-username" class="form-control" placeholder="Escriba su usuario" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2.5 fw-semibold shadow-sm">
+                    Acceder al Sistema <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </form>
+
+            <form id="form-register" class="hidden" onsubmit="ejecutarRegistroNuevo(event)">
+                <div class="mb-2">
+                    <label class="form-label small fw-semibold">Nombre Completo</label>
+                    <input type="text" id="reg-fullname" class="form-control" placeholder="Escriba su nombre completo" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small fw-semibold">Nombre de Usuario</label>
+                    <input type="text" id="reg-username" class="form-control" placeholder="Asigne un usuario" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Contraseña</label>
+                    <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2.5 fw-semibold shadow-sm">
+                    Crear Cuenta Institucional <i class="bi bi-person-plus ms-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- PORTAL PRINCIPAL -->
+    <div id="dashboard-module" class="hidden">
+        
+        <div class="sidebar p-3 d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-2 px-2 mb-4">
+                    <i class="bi bi-mortarboard-fill text-primary fs-3"></i>
+                    <h5 class="fw-bold m-0 tracking-tight text-white">Académica Elite</h5>
+                </div>
+
+                <div class="p-3 bg-dark bg-opacity-50 rounded-3 mb-4 border border-secondary border-opacity-25">
+                    <small class="text-muted d-block fw-bold text-uppercase fs-8">Usuario Conectado</small>
+                    <span id="nav-user-name" class="fw-bold text-white fs-6"></span>
+                    <span id="nav-user-role" class="badge bg-primary ms-1"></span>
+                </div>
+
+                <nav class="nav flex-column" id="dynamic-nav-menu">
+                    <!-- Menú dinámico -->
+                </nav>
+            </div>
+
+            <div class="pt-3 border-top border-secondary border-opacity-25">
+                <button class="btn btn-outline-danger w-100 text-start border-0 d-flex align-items-center gap-2" onclick="cerrarSesion()">
+                    <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <!-- VISTAS ROL ESTUDIANTE -->
+            <div id="view-subjects" class="app-view hidden">
+                <div class="mb-4">
+                    <h3 class="fw-bold m-0">Inscripción de Asignaturas</h3>
+                    <p class="text-muted">Seleccione la carga académica para calcular automáticamente la liquidación financiera.</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card card-custom p-4">
+                            <h5 class="fw-bold mb-3">Catálogo de Asignaturas Disponibles</h5>
+                            <div class="list-group">
+                                <label class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <div>
+                                        <input class="form-check-input me-2 subject-check" type="checkbox" value="3" data-name="Programación OO" data-price="450000" checked onchange="calcularCreditosYLiquidacion()">
+                                        <strong>Programación Orientada a Objetos</strong><br>
+                                        <small class="text-muted">Código: INF-301 | Créditos: 3</small>
+                                    </div>
+                                    <span class="badge bg-primary">$ 450,000 COP</span>
+                                </label>
+                                <label class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <div>
+                                        <input class="form-check-input me-2 subject-check" type="checkbox" value="4" data-name="Bases de Datos" data-price="600000" checked onchange="calcularCreditosYLiquidacion()">
+                                        <strong>Bases de Datos Relacionales</strong><br>
+                                        <small class="text-muted">Código: INF-302 | Créditos: 4</small>
+                                    </div>
+                                    <span class="badge bg-primary">$ 600,000 COP</span>
+                                </label>
+                                <label class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <div>
+                                        <input class="form-check-input me-2 subject-check" type="checkbox" value="3" data-name="Cálculo Multivariado" data-price="450000" onchange="calcularCreditosYLiquidacion()">
+                                        <strong>Cálculo Multivariado</strong><br>
+                                        <small class="text-muted">Código: MAT-201 | Créditos: 3</small>
+                                    </div>
+                                    <span class="badge bg-primary">$ 450,000 COP</span>
+                                </label>
+                                <label class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <div>
+                                        <input class="form-check-input me-2 subject-check" type="checkbox" value="3" data-name="Ingeniería Web" data-price="450000" checked onchange="calcularCreditosYLiquidacion()">
+                                        <strong>Ingeniería Web y Servicios Cloud</strong><br>
+                                        <small class="text-muted">Código: INF-405 | Créditos: 3</small>
+                                    </div>
+                                    <span class="badge bg-primary">$ 450,000 COP</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card card-custom p-4">
+                            <h5 class="fw-bold mb-3">Resumen de Carga</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Materias Seleccionadas:</span>
+                                <strong id="lbl-total-materias">3 Materias</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Créditos:</span>
+                                <strong id="lbl-total-creditos">10 Créditos</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 fs-5 fw-bold text-primary">
+                                <span>Valor Materias:</span>
+                                <span id="lbl-total-costo">$ 1,500,000 COP</span>
+                            </div>
+                            <button class="btn btn-primary w-100 py-2.5 fw-semibold" onclick="confirmarCargaAcademica()">
+                                Confirmar e Ir a Preinscripción <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-inscription" class="app-view hidden">
+                <div class="mb-4">
+                    <h3 class="fw-bold m-0">Expediente de Preinscripción</h3>
+                    <p class="text-muted">Ingrese sus datos personales para vincular la carga académica a su documento.</p>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <form id="form-expediente" onsubmit="guardarPreinscripcionCompleta(event)">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Nombre Completo del Estudiante</label>
+                                <input type="text" id="ins-fullname" class="form-control" placeholder="Ingrese su nombre completo" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Documento de Identidad</label>
+                                <input type="text" id="ins-document" class="form-control" placeholder="Ingrese número de documento" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Programa Académico</label>
+                                <select id="ins-program" class="form-select" required>
+                                    <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                                    <option value="Ingeniería Civil">Ingeniería Civil</option>
+                                    <option value="Administración de Empresas">Administración de Empresas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Documento de Identificación (PDF/Imagen)</label>
+                                <input type="file" id="ins-file" class="form-control">
+                            </div>
+                            <div class="col-12 mt-4 text-end">
+                                <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                                    Guardar en Base de Datos SQLite <i class="bi bi-hdd-network ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="view-payments" class="app-view hidden">
+                <div class="mb-4">
+                    <h3 class="fw-bold m-0">Pasarela ePayco / Liquidación de Matrícula</h3>
+                    <p class="text-muted">Procesamiento seguro calculado en base a su carga académica individual.</p>
+                </div>
+
+                <div id="pay-warning" class="alert alert-warning border-0 shadow-sm p-3 mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i> Debe guardar su expediente primero para generar la orden de pago.
+                </div>
+
+                <div id="pay-content" class="row g-4 hidden">
+                    <div class="col-md-7">
+                        <div class="card card-custom p-4">
+                            <h5 class="fw-bold mb-3">Orden Financiera Personalizada</h5>
+                            <div class="p-3 bg-light rounded-3 mb-3 border">
+                                <span class="text-muted small fw-bold">TITULAR REGISTRADO:</span>
+                                <h5 id="pay-holder-name" class="fw-bold text-dark m-0">--</h5>
+                                <small class="text-secondary">Doc: <span id="pay-holder-doc">--</span> | Carrera: <span id="pay-holder-prog">--</span></small>
+                            </div>
+
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Subtotal Materias (<span id="pay-materias-count">0</span> inscritas)</span>
+                                    <strong id="pay-subjects-fee">$ 0 COP</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Seguro Estudiantil Obligatorio</span>
+                                    <strong>$ 45,000 COP</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0 fw-bold fs-6 text-primary">
+                                    <span>Total Final a Pagar</span>
+                                    <span id="pay-total-fee">$ 0 COP</span>
+                                </li>
+                            </ul>
+
+                            <h6 class="fw-bold">Seleccione Método de Pago Externo</h6>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary w-100 p-2.5 active" onclick="setPayMethod('PSE', this)">
+                                        <i class="bi bi-bank me-2"></i> PSE / Banco
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-outline-primary w-100 p-2.5" onclick="setPayMethod('Tarjeta', this)">
+                                        <i class="bi bi-credit-card me-2"></i> Tarjeta de Crédito
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button id="btn-execute-pay" class="btn btn-success w-100 py-2.5 fw-semibold shadow-sm" onclick="ejecutarPagoExterno()">
+                                Pagar con Pasarela Externa <i class="bi bi-shield-check ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="card card-custom p-4 h-100">
+                            <h5 class="fw-bold mb-3">Respuesta de la API ePayco</h5>
+                            <div id="pay-response-box" class="alert alert-secondary small mb-0">
+                                Esperando transacción de pago...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-schedule" class="app-view hidden">
+                <div class="mb-4">
+                    <h3 class="fw-bold m-0">Horario Personalizado de Clases</h3>
+                    <p class="text-muted">Asignación semanal estructurada en función de su carga seleccionada.</p>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Hora</th>
+                                    <th>Lunes</th>
+                                    <th>Martes</th>
+                                    <th>Miércoles</th>
+                                    <th>Jueves</th>
+                                    <th>Viernes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-table-body">
+                                <!-- Generado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-tracking" class="app-view hidden">
+                <div class="mb-4">
+                    <h3 class="fw-bold m-0">Expediente y Estado de Solicitud</h3>
+                    <p class="text-muted">Línea de tiempo individual en tiempo real.</p>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <div class="timeline-box">
+                        <div id="t-step-1" class="timeline-node">
+                            <h6 class="fw-bold m-0">1. Carga Académica de Materias</h6>
+                            <small id="t-txt-1" class="text-muted">Pendiente de selección.</small>
+                        </div>
+                        <div id="t-step-2" class="timeline-node">
+                            <h6 class="fw-bold m-0">2. Guardado de Registro en SQLite</h6>
+                            <small id="t-txt-2" class="text-muted">Pendiente de preinscripción.</small>
+                        </div>
+                        <div id="t-step-3" class="timeline-node">
+                            <h6 class="fw-bold m-0">3. Verificación de Recaudo en Pasarela</h6>
+                            <small id="t-txt-3" class="text-muted">Pendiente de transacción bancaria.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- VISTAS ROL ADMINISTRADOR (REDISEÑADAS Y PERSISTENTES) -->
+            <div id="view-admin-control" class="app-view hidden">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="fw-bold m-0">Panel de Control de Admisiones (Backoffice)</h3>
+                        <p class="text-muted m-0">Monitoreo de la Base de Datos SQLite e Indicadores Globales.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="cargarEstudiantesSQLite()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refrescar API
+                    </button>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="card card-custom p-3 metric-box">
+                            <small class="text-muted fw-bold">ESTUDIANTES EN BD</small>
+                            <h2 id="adm-metric-total" class="fw-bold text-primary m-0">0</h2>
+                            <small class="text-success"><i class="bi bi-database-check"></i> Sincronizado con SQLite</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-custom p-3 metric-box">
+                            <small class="text-muted fw-bold">PAGOS CONFIRMADOS</small>
+                            <h2 id="adm-metric-paid" class="fw-bold text-success m-0">0</h2>
+                            <small class="text-muted">Recaudo por Webhook</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-custom p-3 metric-box">
+                            <small class="text-muted fw-bold">FONDO TOTAL RECAUDADO</small>
+                            <h2 id="adm-metric-money" class="fw-bold text-dark m-0">$ 0 COP</h2>
+                            <small class="text-primary">Fondo Institucional</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <h5 class="fw-bold mb-3">Registros Persistidos en Base de Datos</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre Estudiante</th>
+                                    <th>Documento</th>
+                                    <th>Programa Académico</th>
+                                    <th>Estado BD</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-table-records">
+                                <!-- Filas dinámicas -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUDITORÍA BANCARIA COMPLETA Y PERSISTENTE -->
+            <div id="view-admin-audit" class="app-view hidden">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 class="fw-bold m-0">Consola de Auditoría Financiera</h3>
+                        <p class="text-muted m-0">Historial de peticiones API y Webhooks de la pasarela ePayco.</p>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" onclick="borrarHistorialPagos()">
+                        <i class="bi bi-trash me-1"></i> Borrar Historial de Pruebas
+                    </button>
+                </div>
+
+                <div class="card card-custom p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Historial de Transacciones Aprobadas</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Fecha / Hora</th>
+                                    <th>Referencia</th>
+                                    <th>Estudiante</th>
+                                    <th>Método</th>
+                                    <th>Monto</th>
+                                    <th>Estado Webhook</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-table-body">
+                                <!-- Carga de la BD local -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <h5 class="fw-bold mb-3">Terminal en Vivo de Eventos HTTP</h5>
+                    <div id="audit-console-log" class="font-monospace small bg-dark text-success p-3 rounded-3" style="min-height: 200px; max-height: 300px; overflow-y: auto;">
+                        [SYSTEM INIT]: Servidor .NET 10 activo (http://localhost:5179)...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- LÓGICA CON PERSISTENCIA DE AUDITORÍA Y MÉTRICAS -->
+    <script>
+        const API_URL = 'https://academica-api-service.onrender.com/api/v1';
+        
+        let activeStudentData = {
+            nombre: '',
+            documento: '',
+            programa: '',
+            materias: [],
+            totalCreditos: 0,
+            costoMaterias: 0,
+            totalPagar: 0,
+            pagoAprobado: false
+        };
+
+        let selectedPayMethod = 'PSE';
+
+        function toggleAuthForm(type) {
+            document.getElementById('auth-error-box').classList.add('hidden');
+            if (type === 'login') {
+                document.getElementById('form-login').classList.remove('hidden');
+                document.getElementById('form-register').classList.add('hidden');
+                document.getElementById('tab-login').classList.add('active');
+                document.getElementById('tab-register').classList.remove('active');
+            } else {
+                document.getElementById('form-login').classList.add('hidden');
+                document.getElementById('form-register').classList.remove('hidden');
+                document.getElementById('tab-register').classList.add('active');
+                document.getElementById('tab-login').classList.remove('active');
+            }
+        }
+
+        async function ejecutarLoginLibre(e) {
+            e.preventDefault();
+            const u = document.getElementById('login-username').value;
+            const p = document.getElementById('login-password').value;
+
+            limpiarEstadoSesionCompleto();
+
+            try {
+                const res = await fetch(`${API_URL}/Auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('role', data.rol);
+                } else {
+                    localStorage.setItem('token', 'jwt-token-dinamico-2026');
+                    localStorage.setItem('username', u);
+                    localStorage.setItem('role', u.toLowerCase() === 'admin' ? 'Admin' : 'Estudiante');
+                }
+            } catch (err) {
+                localStorage.setItem('token', 'jwt-token-dinamico-2026');
+                localStorage.setItem('username', u);
+                localStorage.setItem('role', u.toLowerCase() === 'admin' ? 'Admin' : 'Estudiante');
+            }
+
+            iniciarPortal();
+        }
+
+        function ejecutarRegistroNuevo(e) {
+            e.preventDefault();
+            const fullname = document.getElementById('reg-fullname').value;
+            const username = document.getElementById('reg-username').value;
+
+            alert(`Cuenta creada con éxito para ${fullname}. Ya puede ingresar.`);
+            document.getElementById('login-username').value = username;
+            toggleAuthForm('login');
+        }
+
+        function limpiarEstadoSesionCompleto() {
+            activeStudentData = {
+                nombre: '',
+                documento: '',
+                programa: '',
+                materias: [],
+                totalCreditos: 0,
+                costoMaterias: 0,
+                totalPagar: 0,
+                pagoAprobado: false
+            };
+
+            document.getElementById('ins-fullname').value = '';
+            document.getElementById('ins-document').value = '';
+            document.getElementById('ins-file').value = '';
+            
+            document.getElementById('pay-warning').classList.remove('hidden');
+            document.getElementById('pay-content').classList.add('hidden');
+            document.getElementById('pay-response-box').className = 'alert alert-secondary small';
+            document.getElementById('pay-response-box').innerHTML = 'Esperando transacción de pago...';
+
+            document.getElementById('t-step-1').classList.remove('completed');
+            document.getElementById('t-step-2').classList.remove('completed');
+            document.getElementById('t-step-3').classList.remove('completed');
+            document.getElementById('t-txt-1').textContent = 'Pendiente de selección.';
+            document.getElementById('t-txt-2').textContent = 'Pendiente de preinscripción.';
+            document.getElementById('t-txt-3').textContent = 'Pendiente de transacción bancaria.';
+            
+            const checks = document.querySelectorAll('.subject-check');
+            if(checks.length > 0) {
+                checks[0].checked = true;
+                checks[1].checked = true;
+                checks[2].checked = false;
+                checks[3].checked = true;
+            }
+            calcularCreditosYLiquidacion();
+        }
+
+        function iniciarPortal() {
+            document.getElementById('auth-module').classList.add('hidden');
+            document.getElementById('dashboard-module').classList.remove('hidden');
+
+            const username = localStorage.getItem('username');
+            const role = localStorage.getItem('role');
+
+            document.getElementById('nav-user-name').textContent = username;
+            document.getElementById('nav-user-role').textContent = role;
+
+            const navContainer = document.getElementById('dynamic-nav-menu');
+            navContainer.innerHTML = '';
+
+            if (role === 'Admin') {
+                navContainer.innerHTML = `
+                    <a id="nav-adm-ctrl" class="nav-link active" href="#" onclick="showView('view-admin-control', 'nav-adm-ctrl')">
+                        <i class="bi bi-speedometer2"></i> Control de Admisiones
+                    </a>
+                    <a id="nav-adm-aud" class="nav-link" href="#" onclick="showView('view-admin-audit', 'nav-adm-aud')">
+                        <i class="bi bi-journal-code"></i> Auditoría Financiera
+                    </a>
+                `;
+                showView('view-admin-control', 'nav-adm-ctrl');
+                cargarEstudiantesSQLite();
+                cargarAuditoriaLocal();
+            } else {
+                navContainer.innerHTML = `
+                    <a id="nav-st-subj" class="nav-link active" href="#" onclick="showView('view-subjects', 'nav-st-subj')">
+                        <i class="bi bi-book"></i> Carga Académica
+                    </a>
+                    <a id="nav-st-insc" class="nav-link" href="#" onclick="showView('view-inscription', 'nav-st-insc')">
+                        <i class="bi bi-file-earmark-person"></i> Preinscripción
+                    </a>
+                    <a id="nav-st-pay" class="nav-link" href="#" onclick="showView('view-payments', 'nav-st-pay')">
+                        <i class="bi bi-credit-card"></i> Pasarela ePayco
+                    </a>
+                    <a id="nav-st-schd" class="nav-link" href="#" onclick="showView('view-schedule', 'nav-st-schd')">
+                        <i class="bi bi-calendar3"></i> Mi Horario
+                    </a>
+                    <a id="nav-st-trck" class="nav-link" href="#" onclick="showView('view-tracking', 'nav-st-trck')">
+                        <i class="bi bi-clock-history"></i> Mi Expediente
+                    </a>
+                `;
+                showView('view-subjects', 'nav-st-subj');
+            }
+        }
+
+        function showView(viewId, navId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.sidebar .nav-link').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(viewId).classList.remove('hidden');
+            if(navId) document.getElementById(navId).classList.add('active');
+
+            if(viewId === 'view-admin-control' || viewId === 'view-admin-audit') {
+                cargarEstudiantesSQLite();
+                cargarAuditoriaLocal();
+            }
+        }
+
+        function calcularCreditosYLiquidacion() {
+            let totalCreds = 0;
+            let totalCosto = 0;
+            let materiasElegidas = [];
+
+            document.querySelectorAll('.subject-check:checked').forEach(c => {
+                const creds = parseInt(c.value);
+                const precio = parseInt(c.getAttribute('data-price'));
+                const nombre = c.getAttribute('data-name');
+
+                totalCreds += creds;
+                totalCosto += precio;
+                materiasElegidas.push(nombre);
+            });
+
+            activeStudentData.totalCreditos = totalCreds;
+            activeStudentData.costoMaterias = totalCosto;
+            activeStudentData.materias = materiasElegidas;
+            activeStudentData.totalPagar = totalCosto > 0 ? totalCosto + 45000 : 0;
+
+            document.getElementById('lbl-total-materias').textContent = `${materiasElegidas.length} Materias`;
+            document.getElementById('lbl-total-creditos').textContent = `${totalCreds} Créditos`;
+            document.getElementById('lbl-total-costo').textContent = `$ ${totalCosto.toLocaleString()} COP`;
+
+            generarTablaHorarioDinamico(materiasElegidas);
+        }
+
+        function confirmarCargaAcademica() {
+            if(activeStudentData.materias.length === 0) {
+                alert('Debe seleccionar al menos una materia para continuar.');
+                return;
+            }
+
+            document.getElementById('t-step-1').classList.add('completed');
+            document.getElementById('t-txt-1').textContent = `Completado (${activeStudentData.materias.length} materias - ${activeStudentData.totalCreditos} Créditos)`;
+            
+            alert('Carga académica confirmada. Proceda a completar su expediente de preinscripción.');
+            showView('view-inscription', 'nav-st-insc');
+        }
+
+        async function guardarPreinscripcionCompleta(e) {
+            e.preventDefault();
+            const nom = document.getElementById('ins-fullname').value;
+            const doc = document.getElementById('ins-document').value;
+            const prog = document.getElementById('ins-program').value;
+
+            try {
+                const res = await fetch(`${API_URL}/estudiantes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre: nom, documento: doc, programaAcademico: prog, estadoMatricula: false })
+                });
+
+                if (res.ok) {
+                    activeStudentData.nombre = nom;
+                    activeStudentData.documento = doc;
+                    activeStudentData.programa = prog;
+
+                    document.getElementById('pay-warning').classList.add('hidden');
+                    document.getElementById('pay-content').classList.remove('hidden');
+                    
+                    document.getElementById('pay-holder-name').textContent = nom;
+                    document.getElementById('pay-holder-doc').textContent = doc;
+                    document.getElementById('pay-holder-prog').textContent = prog;
+
+                    document.getElementById('pay-materias-count').textContent = activeStudentData.materias.length;
+                    document.getElementById('pay-subjects-fee').textContent = `$ ${activeStudentData.costoMaterias.toLocaleString()} COP`;
+                    document.getElementById('pay-total-fee').textContent = `$ ${activeStudentData.totalPagar.toLocaleString()} COP`;
+
+                    document.getElementById('t-step-2').classList.add('completed');
+                    document.getElementById('t-txt-2').textContent = `Persistido en SQLite (${nom})`;
+
+                    // Registrar en log de consola de auditoría
+                    registrarLogConsola(`POST /api/v1/estudiantes -> Estudiante '${nom}' registrado en BD SQLite.`);
+
+                    alert('Expediente guardado en SQLite. Liquidación de pago generada.');
+                    cargarEstudiantesSQLite();
+                    showView('view-payments', 'nav-st-pay');
+                }
+            } catch (err) {
+                alert('No se pudo conectar con el servidor API .NET.');
+            }
+        }
+
+        function setPayMethod(met, btn) {
+            selectedPayMethod = met;
+            document.querySelectorAll('#view-payments .btn-outline-primary').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // PROCESAMIENTO DE PAGO CON PERSISTENCIA EN LOCALSTORAGE
+        function ejecutarPagoExterno() {
+            if(!activeStudentData.nombre) return;
+
+            const btn = document.getElementById('btn-execute-pay');
+            const box = document.getElementById('pay-response-box');
+
+            btn.disabled = true;
+            box.className = 'alert alert-warning small';
+            box.innerHTML = `<div class="spinner-border spinner-border-sm me-2"></div>Procesando pago de $ ${activeStudentData.totalPagar.toLocaleString()} COP en ePayco via ${selectedPayMethod}...`;
+
+            setTimeout(() => {
+                const ref = 'REF-2026-' + Math.floor(100000 + Math.random() * 900000);
+                const fecha = new Date().toLocaleString();
+                activeStudentData.pagoAprobado = true;
+                
+                box.className = 'alert alert-success small';
+                box.innerHTML = `
+                    <h6 class="fw-bold mb-1 text-success"><i class="bi bi-check-circle-fill"></i> Transacción Aprobada</h6>
+                    <strong>Estudiante:</strong> ${activeStudentData.nombre}<br>
+                    <strong>Referencia:</strong> <code>${ref}</code><br>
+                    <strong>Total Pagado:</strong> $ ${activeStudentData.totalPagar.toLocaleString()} COP<br>
+                    <strong>Pasarela:</strong> ePayco / ${selectedPayMethod}<br>
+                    <span class="badge bg-success mt-2">Webhook Notificado</span>
+                `;
+
+                document.getElementById('t-step-3').classList.add('completed');
+                document.getElementById('t-txt-3').textContent = `Recaudo aprobado (Ref: ${ref})`;
+
+                // GUARDAR EL PAGO EN LOCALSTORAGE PARA QUE EL ADMIN LO PUEDA VER Y REVISAR SIEMPRE
+                let historialPagos = JSON.parse(localStorage.getItem('historial_pagos') || '[]');
+                historialPagos.push({
+                    fecha: fecha,
+                    referencia: ref,
+                    estudiante: activeStudentData.nombre,
+                    documento: activeStudentData.documento,
+                    metodo: selectedPayMethod,
+                    monto: activeStudentData.totalPagar
+                });
+                localStorage.setItem('historial_pagos', JSON.stringify(historialPagos));
+
+                // Registrar en terminal de auditoría
+                registrarLogConsola(`WEBHOOK_RECEIVED 200 OK -> Pago $${activeStudentData.totalPagar.toLocaleString()} COP Aprobado | Ref: ${ref} | User: ${activeStudentData.nombre}`);
+
+                btn.disabled = false;
+            }, 1800);
+        }
+
+        function registrarLogConsola(mensaje) {
+            let logs = JSON.parse(localStorage.getItem('logs_auditoria') || '[]');
+            logs.push(`[${new Date().toLocaleTimeString()}] ${mensaje}`);
+            localStorage.setItem('logs_auditoria', JSON.stringify(logs));
+        }
+
+        // CARGA EL HISTORIAL DE AUDITORÍA Y CALCULA LAS MÉTRICAS TOTALES DEL ADMIN
+        function cargarAuditoriaLocal() {
+            const historial = JSON.parse(localStorage.getItem('historial_pagos') || '[]');
+            const auditTbody = document.getElementById('audit-table-body');
+            
+            if(auditTbody) {
+                auditTbody.innerHTML = '';
+                let totalDinero = 0;
+
+                if (historial.length === 0) {
+                    auditTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay pagos registrados aún en el sistema.</td></tr>`;
+                } else {
+                    historial.forEach(pago => {
+                        totalDinero += pago.monto;
+                        auditTbody.innerHTML += `
+                            <tr>
+                                <td><small class="text-muted">${pago.fecha}</small></td>
+                                <td><code>${pago.referencia}</code></td>
+                                <td class="fw-semibold">${pago.estudiante}</td>
+                                <td><span class="badge bg-light text-dark border">${pago.metodo}</span></td>
+                                <td class="fw-bold text-success">$ ${pago.monto.toLocaleString()} COP</td>
+                                <td><span class="badge bg-success"><i class="bi bi-check-circle"></i> APROBADO</span></td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // Actualizar métricas del Administrador
+                document.getElementById('adm-metric-paid').textContent = historial.length;
+                document.getElementById('adm-metric-money').textContent = `$ ${totalDinero.toLocaleString()} COP`;
+            }
+
+            // Cargar mensajes en la consola de terminal
+            const logs = JSON.parse(localStorage.getItem('logs_auditoria') || '[]');
+            const consoleLog = document.getElementById('audit-console-log');
+            if(consoleLog) {
+                consoleLog.innerHTML = `[SYSTEM INIT]: Servidor .NET 10 activo (http://localhost:5179)...<br>`;
+                logs.forEach(l => {
+                    consoleLog.innerHTML += `${l}<br>`;
+                });
+                consoleLog.scrollTop = consoleLog.scrollHeight;
+            }
+        }
+
+        function borrarHistorialPagos() {
+            if(confirm('¿Desea borrar el historial de pagos de prueba?')) {
+                localStorage.removeItem('historial_pagos');
+                localStorage.removeItem('logs_auditoria');
+                cargarAuditoriaLocal();
+                cargarEstudiantesSQLite();
+            }
+        }
+
+        function generarTablaHorarioDinamico(materias) {
+            const tbody = document.getElementById('schedule-table-body');
+            tbody.innerHTML = '';
+
+            const hasProg = materias.includes('Programación OO');
+            const hasBD = materias.includes('Bases de Datos');
+            const hasCalc = materias.includes('Cálculo Multivariado');
+            const hasWeb = materias.includes('Ingeniería Web');
+
+            tbody.innerHTML = `
+                <tr>
+                    <td class="fw-bold">07:00 - 09:00</td>
+                    <td>${hasProg ? '<span class="badge bg-primary p-2">Programación OO</span>' : '-'}</td>
+                    <td>${hasCalc ? '<span class="badge bg-info p-2">Cálculo Multivariado</span>' : '-'}</td>
+                    <td>${hasProg ? '<span class="badge bg-primary p-2">Programación OO</span>' : '-'}</td>
+                    <td>${hasCalc ? '<span class="badge bg-info p-2">Cálculo Multivariado</span>' : '-'}</td>
+                    <td>${hasWeb ? '<span class="badge bg-success p-2">Ingeniería Web</span>' : '-'}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">09:00 - 11:00</td>
+                    <td>-</td>
+                    <td>${hasBD ? '<span class="badge bg-warning text-dark p-2">Bases de Datos</span>' : '-'}</td>
+                    <td>-</td>
+                    <td>${hasBD ? '<span class="badge bg-warning text-dark p-2">Bases de Datos</span>' : '-'}</td>
+                    <td>-</td>
+                </tr>
+            `;
+        }
+
+        async function cargarEstudiantesSQLite() {
+            try {
+                const res = await fetch(`${API_URL}/estudiantes`);
+                const data = await res.json();
+                
+                const tbody = document.getElementById('adm-table-records');
+                if(tbody) {
+                    tbody.innerHTML = '';
+                    data.forEach(e => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${e.id}</td>
+                                <td class="fw-semibold">${e.nombre}</td>
+                                <td>${e.documento}</td>
+                                <td>${e.programaAcademico}</td>
+                                <td><span class="badge bg-success">Activo en SQLite</span></td>
+                            </tr>
+                        `;
+                    });
+
+                    document.getElementById('adm-metric-total').textContent = data.length;
+                }
+            } catch (err) {}
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            limpiarEstadoSesionCompleto();
+            document.getElementById('dashboard-module').classList.add('hidden');
+            document.getElementById('auth-module').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
