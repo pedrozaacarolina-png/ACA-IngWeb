@@ -1,0 +1,45 @@
+flowchart TD
+    %% Estilos de Tema Oscuro + Bordes Neón
+    classDef caller fill:#1e085a,color:#ffffff,stroke:#7c4dff,stroke-width:2px;
+    classDef middleware fill:#4a148c,color:#ffffff,stroke:#e040fb,stroke-width:2px;
+    classDef controller fill:#512da8,color:#ffffff,stroke:#b388ff,stroke-width:2px;
+    classDef service fill:#4527a0,color:#ffffff,stroke:#ffab40,stroke-width:2px;
+    classDef repo fill:#311b92,color:#ffffff,stroke:#7c4dff,stroke-width:2px;
+    classDef database fill:#280659,color:#ffffff,stroke:#ab47bc,stroke-width:2px;
+    classDef external fill:#1a237e,color:#ffffff,stroke:#82b1ff,stroke-width:2px;
+
+    %% Elemento Externo Cliente
+    SPA["🌐 <b>Aplicación Web SPA</b><br/><i>[HTML / CSS / Bootstrap]</i>"]:::caller
+
+    %% Zoom Interno: Contenedor API Backend .NET
+    subgraph BACKEND ["📦 Contenedor API Backend (.NET)"]
+        style BACKEND fill:#1e1e1e,stroke:#616161,stroke-width:2px,color:#ffffff
+
+        AUTH["🔒 <b>Middleware de Autenticación / JWT</b><br/><i>[Capa de Seguridad]</i><br/>Intercepta la petición, valida la firma del token JWT y extrae los permisos (claims) del usuario."]:::middleware
+        
+        CTRL["🎮 <b>Controlador de Matrículas</b><br/><i>[Capa de Puntos de Entrada - API ASP.NET Core]</i><br/>Mapea peticiones HTTP, valida los DTOs de entrada y retorna respuestas JSON (HTTP 200/400/500)."]:::controller
+        
+        SERV["⚙️ <b>Servicio de Matrículas</b><br/><i>[Capa de Dominio y Lógica de Negocio]</i><br/>Ejecuta reglas de negocio: verificación de requisitos, validación de cupos y cálculo de tarifas."]:::service
+        
+        REPO["📦 <b>Repositorio de Matrículas</b><br/><i>[Capa de Persistencia / ORM]</i><br/>Implementa el patrón Repositorio utilizando Entity Framework Core para la gestión de entidades."]:::repo
+        
+        AZPUB["☁️ <b>Publicador de Cola Azure</b><br/><i>[Componente de Integración]</i><br/>Encapsula el SDK de Azure Service Bus para emitir eventos de dominio de forma asíncrona."]:::service
+    end
+
+    %% Persistencia e Integración Externa
+    SQL[("🗄️ <b>Base de Datos SQL Server</b><br/><i>[Base de Datos Relacional]</i>")]:::database
+    AZURE[("📬 <b>Azure Service Bus / Cola</b><br/><i>[Gestor de Mensajes]</i>")]:::external
+
+    %% Flujo de ejecución interno
+    SPA -->|"<b>1. Petición POST /api/matriculas</b><br/><i>[Encabezado: Autorización Bearer]</i>"| AUTH
+    AUTH -->|"<b>2. Validador de Tokens / Contexto de Permisos</b>"| CTRL
+    CTRL -->|"<b>3. Llama a procesarMatricula(dto)</b>"| SERV
+    SERV -->|"<b>4. Persiste estado de la matrícula</b>"| REPO
+    SERV -->|"<b>5. Emite evento MatriculaCreada</b>"| AZPUB
+    REPO -->|"<b>6. Ejecuta Consulta SQL / EF Core</b>"| SQL
+    AZPUB -->|"<b>7. Publica mensaje (AMQP)</b>"| AZURE
+
+    %% Alineación visual
+    SPA ---> BACKEND
+    BACKEND ---> SQL
+    BACKEND ---> AZURE

@@ -1,0 +1,65 @@
+flowchart TD
+    %% Estilos C4 y Tema Oscuro
+    classDef actor fill:#301934,color:#ffffff,stroke:#e040fb,stroke-width:2px;
+    classDef container fill:#4a148c,color:#ffffff,stroke:#ffab40,stroke-width:2px;
+    classDef database fill:#280659,color:#ffffff,stroke:#ab47bc,stroke-width:2px;
+    classDef external fill:#37474f,color:#ffffff,stroke:#78909c,stroke-width:2px;
+
+    %% Actor Principal
+    USER["👤 <b>Usuario Final</b><br/><i>(Estudiante / Administrativo)</i>"]:::actor
+
+    %% Contenedor Principal: Sistema Central
+    subgraph SYSTEM ["📦 Sistema Central (Académica)"]
+        style SYSTEM fill:#1e1e1e,stroke:#616161,stroke-width:2px,color:#ffffff
+
+        subgraph FRONTENDS ["💻 Capa de Presentación"]
+            style FRONTENDS fill:#2a2a2a,stroke:#424242,color:#e0e0e0
+            WEB["🌐 <b>Aplicación Web SPA</b><br/><i>[HTML / CSS / Bootstrap]</i><br/>Interfaz web responsiva para formulario, carga e información."]:::container
+        end
+
+        subgraph BACKENDS ["⚙️ Capa de Negocio"]
+            style BACKENDS fill:#2a2a2a,stroke:#424242,color:#e0e0e0
+            DOTNET["⚙️ <b>Backend API (.NET)</b><br/><i>[.NET Core / C#]</i><br/>API principal, orquestador de pagos e integración con Azure."]:::container
+            JAVA["☕ <b>Servicios Académicos (Java)</b><br/><i></i><br/>Procesamiento de validaciones y reglas de negocio del sistema."]:::container
+        end
+
+        subgraph ASYNC ["☁️ Capa de Asincronía"]
+            style ASYNC fill:#2a2a2a,stroke:#424242,color:#e0e0e0
+            AZURE[("📬 <b>Azure Service Bus / Queue</b><br/><i>[Microsoft Azure]</i><br/>Cola de mensajería asíncrona para procesamiento diferido.")]:::database
+        end
+
+        subgraph DATA ["💾 Capa de Persistencia"]
+            style DATA fill:#2a2a2a,stroke:#424242,color:#e0e0e0
+            DBSQL[("🗄️ <b>Base de Datos Relacional</b><br/><i>[Microsoft SQL Server]</i><br/>Persistencia única (gestionada mediante SSMS).")]:::database
+        end
+    end
+
+    %% Sistemas Externos
+    subgraph EXTERNAL ["🌐 Sistemas Externos"]
+        style EXTERNAL fill:#141414,stroke:#424242,color:#e0e0e0
+        PAY["💳 <b>Pasarela de Pagos</b><br/><i>[Stripe / PSE / Wompi]</i>"]:::external
+        MAIL["📧 <b>Servicio de Notificaciones</b><br/><i>[SendGrid / Mailgun]</i>"]:::external
+        MIN["🏛️ <b>Sistema Ministerio</b><br/><i>[SNIES / SIMAT]</i>"]:::external
+    end
+
+    %% Relaciones
+    USER -->|"HTTPS / HTML"| WEB
+
+    WEB -->|"HTTPS / REST"| DOTNET
+    WEB -->|"HTTPS / REST"| JAVA
+
+    DOTNET -->|"TCP / Port 1433"| DBSQL
+    JAVA -->|"TCP / Port 1433"| DBSQL
+
+    DOTNET <-->|"AMQP / HTTPS (Azure SDK)"| AZURE
+
+    DOTNET -->|"HTTPS / REST"| PAY
+    AZURE -->|"HTTPS / REST"| MAIL
+    DOTNET -->|"HTTPS / REST"| MIN
+
+    %% Alineación Jerárquica
+    USER ---> FRONTENDS
+    FRONTENDS ---> BACKENDS
+    BACKENDS ---> ASYNC
+    BACKENDS ---> DATA
+    BACKENDS ---> EXTERNAL

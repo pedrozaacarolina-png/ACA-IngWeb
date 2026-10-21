@@ -1,0 +1,38 @@
+flowchart TD
+    %% Estilos basados en la especificación oficial de C4
+    classDef person fill:#08427b,color:#ffffff,stroke:#052e56,stroke-width:2px;
+    classDef system fill:#1168bd,color:#ffffff,stroke:#0b4884,stroke-width:2px;
+    classDef external fill:#707070,color:#ffffff,stroke:#404040,stroke-width:2px;
+
+    subgraph USERS ["👥 Actores y Usuarios del Sistema"]
+        style USERS fill:#fafafa,stroke:#e0e0e0,stroke-width:1px,color:#333
+        direction LR
+        U1["👤 <b>Estudiante / Aspirante</b><br/><i>[Cliente]</i><br/>Preinscripción, carga de<br/>documentos y pago en línea"]:::person
+        U2["👤 <b>Administrador Académico</b><br/><i>[Personal]</i><br/>Validación de requisitos,<br/>cupos y reportes"]:::person
+    end
+
+    subgraph CORE ["💻 Sistema Central"]
+        style CORE fill:#f0f7ff,stroke:#b3d4fc,stroke-width:1px,color:#333
+        SYS["🏛️ <b>Académica </b><br/><i>[Sistema de Software]</i><br/>Plataforma central de admisiones,<br/>liquidación y registro académico"]:::system
+    end
+
+    subgraph EXTS ["🌐 Sistemas Externos"]
+        style EXTS fill:#fafafa,stroke:#e0e0e0,stroke-width:1px,color:#333
+        direction LR
+        EXT1["💳 <b>Pasarela de Pagos</b><br/><i>[Sistema Externo]</i><br/>PSE / Wompi / Stripe"]:::external
+        EXT2["📧 <b>Servicio Notificaciones</b><br/><i>[Sistema Externo]</i><br/>SendGrid / Twilio"]:::external
+        EXT3["🏛️ <b>Ministerio / SNIES</b><br/><i>[Sistema Externo]</i><br/>Sincronización legal"]:::external
+    end
+
+    %% Relaciones de uso (Entradas)
+    U1 -->|"<b>1. Formulario, PDF y Pago</b><br/><i>[HTTPS / Web]</i>"| SYS
+    U2 -->|"<b>2. Auditoría y Cupos</b><br/><i>[HTTPS / Web]</i>"| SYS
+
+    %% Relaciones con terceros (Salidas)
+    SYS -->|"<b>3. Procesar cobro</b><br/><i>[API REST]</i>"| EXT1
+    SYS -->|"<b>4. Enviar correos</b><br/><i>[API REST]</i>"| EXT2
+    SYS -->|"<b>5. Registro de matrícula</b><br/><i>[API REST]</i>"| EXT3
+
+    %% Control de distribución jerárquica
+    USERS ---> CORE
+    CORE ---> EXTS

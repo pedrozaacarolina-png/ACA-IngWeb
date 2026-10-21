@@ -1,0 +1,12 @@
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\bin\Debug\net10.0\AcademicEnrollmentService.Core.deps.json
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\bin\Debug\net10.0\AcademicEnrollmentService.Core.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\bin\Debug\net10.0\AcademicEnrollmentService.Core.pdb
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.AssemblyInfoInputs.cache
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.AssemblyInfo.cs
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.sourcelink.json
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\refint\AcademicEnrollmentService.Core.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\AcademicEnrollmentService.Core.pdb
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Core\obj\Debug\net10.0\ref\AcademicEnrollmentService.Core.dll

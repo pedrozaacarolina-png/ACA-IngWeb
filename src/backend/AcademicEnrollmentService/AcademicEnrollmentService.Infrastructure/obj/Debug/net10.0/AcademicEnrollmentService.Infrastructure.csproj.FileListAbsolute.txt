@@ -1,0 +1,16 @@
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\bin\Debug\net10.0\AcademicEnrollmentService.Infrastructure.deps.json
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\bin\Debug\net10.0\AcademicEnrollmentService.Infrastructure.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\bin\Debug\net10.0\AcademicEnrollmentService.Infrastructure.pdb
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\bin\Debug\net10.0\AcademicEnrollmentService.Core.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\bin\Debug\net10.0\AcademicEnrollmentService.Core.pdb
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.AssemblyInfo.cs
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.sourcelink.json
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\Academic.B89866C5.Up2Date
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\refint\AcademicEnrollmentService.Infrastructure.dll
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\AcademicEnrollmentService.Infrastructure.pdb
+C:\Users\ASUS\Documents\GitHub\proyecto-ingweb-aca1\src\backend\AcademicEnrollmentService\AcademicEnrollmentService.Infrastructure\obj\Debug\net10.0\ref\AcademicEnrollmentService.Infrastructure.dll
